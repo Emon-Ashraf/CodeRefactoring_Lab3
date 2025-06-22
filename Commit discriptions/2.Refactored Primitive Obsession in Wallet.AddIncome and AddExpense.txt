@@ -1,0 +1,11 @@
+Refactored Primitive Obsession in Wallet.AddIncome and AddExpense
+
+Flaw Type: Primitive Obsession
+
+Description: Previously, Wallet methods used raw `int` and `double` values for transaction types and money. This made the code unclear and error-prone.
+
+Refactoring: Replaced primitive types with enums (IncomeType, ExpenseType) and a domain object (Money).
+
+Why: Improves clarity, type safety, and better represents domain concepts.
+
+Conclusion: Strengthens code readability, prevents invalid inputs, and supports richer domain modeling.
