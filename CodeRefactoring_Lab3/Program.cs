@@ -22,7 +22,7 @@ namespace PersonalFinanceManagement
                 string x = Console.ReadLine();
 
                 if (x == "1") Reg();
-                else if (x == "2") Log_in();
+                else if (x == "2") LogIn();
                 else if (x == "3") return;
                 else Console.WriteLine("Nope.");
             }
@@ -42,8 +42,8 @@ namespace PersonalFinanceManagement
             Console.WriteLine("Done!");
         }
 
-        // Refactored Log_in()
-        private static void Log_in()
+        //refactored code login method
+        private static void LogIn()
         {
             Console.Write("Email? ");
             string e = Console.ReadLine();
@@ -61,6 +61,8 @@ namespace PersonalFinanceManagement
                 Console.WriteLine("Wrong...");
             }
         }
+
+
 
         private static bool AuthenticateAndSetUser(string email, string password)
         {
