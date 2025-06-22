@@ -42,7 +42,6 @@ namespace PersonalFinanceManagement
             Console.WriteLine("Done!");
         }
 
-        //refactored code login method
         private static void LogIn()
         {
             Console.Write("Email? ");
@@ -61,8 +60,6 @@ namespace PersonalFinanceManagement
                 Console.WriteLine("Wrong...");
             }
         }
-
-
 
         private static bool AuthenticateAndSetUser(string email, string password)
         {
@@ -142,7 +139,8 @@ namespace PersonalFinanceManagement
 
             Wallet w = new Wallet(n, curr);
             activeUser.AddWallet(w);
-            w.AddIncome((int)IncomeType.Other, a, "Initial money");
+            Money initial = new Money { Amount = a, Currency = curr };
+            w.AddIncome(IncomeType.Other, initial, "Initial money");
         }
 
         private static void DoIncome()
@@ -176,7 +174,8 @@ namespace PersonalFinanceManagement
                 Console.Write("Desc: ");
                 string d = Console.ReadLine();
 
-                activeUser.ActiveWallet.AddIncome((int)typ, m, d);
+                Money money = new Money { Amount = m, Currency = activeUser.ActiveWallet.Currency };
+                activeUser.ActiveWallet.AddIncome(typ, money, d);  // ✅ CORRECT
                 Console.WriteLine("Okay.");
             }
             else Console.WriteLine("Login!");
@@ -213,7 +212,8 @@ namespace PersonalFinanceManagement
                 Console.Write("Desc: ");
                 string d = Console.ReadLine();
 
-                activeUser.ActiveWallet.AddExpense((int)typ, m, d);
+                Money money = new Money { Amount = m, Currency = activeUser.ActiveWallet.Currency };
+                activeUser.ActiveWallet.AddExpense(typ, money, d);  // ✅ CORRECT
                 Console.WriteLine("Okay.");
             }
             else Console.WriteLine("Login!");
@@ -283,13 +283,9 @@ namespace PersonalFinanceManagement
             return users.Find(x => x.Email == email && x.Authenticate(password));
         }
 
-
-
-        //lab2
         public static User TryAuthenticate(string email, string password)
         {
             return Storage.Authenticate(email, password);
         }
-
     }
 }

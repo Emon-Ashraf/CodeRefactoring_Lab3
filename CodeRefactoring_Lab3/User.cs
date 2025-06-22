@@ -89,7 +89,8 @@ namespace PersonalFinanceManagement
         {
             if (ActiveWallet != null)
             {
-                ActiveWallet.AddIncome((int)selectedIncomeType, amount, description);
+                var money = new Money { Amount = amount, Currency = ActiveWallet.Currency };
+                ActiveWallet.AddIncome(selectedIncomeType, money, description);
             }
             else
             {
@@ -101,7 +102,8 @@ namespace PersonalFinanceManagement
         {
             if (ActiveWallet != null)
             {
-                ActiveWallet.AddExpense((int)selectedExpenseType, amount, description);
+                var money = new Money { Amount = amount, Currency = ActiveWallet.Currency };
+                ActiveWallet.AddExpense(selectedExpenseType, money, description);
             }
             else
             {
@@ -120,6 +122,5 @@ namespace PersonalFinanceManagement
                 return "Please create/select a wallet to view statistics.";
             }
         }
-
     }
 }

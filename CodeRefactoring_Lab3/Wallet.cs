@@ -8,7 +8,7 @@ namespace PersonalFinanceManagement
     {
         Salary,
         Scholarship,
-        Gift,     //
+        Gift,
         Other
     }
 
@@ -54,16 +54,7 @@ namespace PersonalFinanceManagement
 
             if (startingAmount > 0)
             {
-                IncomeTransaction initialIncome = new IncomeTransaction
-                {
-                    DateTime = DateTime.Now,
-                    Amount = startingAmount,
-                    Money = new Money { Amount = startingAmount, Currency = currency },
-                    Description = "Initial balance",
-                    IncomeCategory = IncomeType.Other
-                };
-
-                operations.Add(initialIncome);
+                AddIncome(IncomeType.Other, new Money { Amount = startingAmount, Currency = currency }, "Initial balance");
             }
         }
 
@@ -77,9 +68,9 @@ namespace PersonalFinanceManagement
             return operations.FindAll(op => op.DateTime >= fromDate && op.DateTime <= toDate);
         }
 
-        public void AddIncome(int incomeType, double money, string text)
+        public void AddIncome(IncomeType incomeType, Money money, string text)
         {
-            if (money <= 0)
+            if (money.Amount <= 0)
             {
                 throw new ArgumentException("Income amount must be greater than 0.");
             }
@@ -91,18 +82,18 @@ namespace PersonalFinanceManagement
 
             IncomeTransaction it = new IncomeTransaction
             {
-                Amount = money,
-                Money = new Money { Amount = money, Currency = Currency },
+                Amount = money.Amount,
+                Money = money,
                 Description = text,
                 DateTime = DateTime.Now,
-                IncomeCategory = (IncomeType)incomeType
+                IncomeCategory = incomeType
             };
             operations.Add(it);
         }
 
-        public void AddExpense(int expenseType, double money, string text)
+        public void AddExpense(ExpenseType expenseType, Money money, string text)
         {
-            if (money <= 0)
+            if (money.Amount <= 0)
             {
                 throw new ArgumentException("Expense amount must be greater than 0.");
             }
@@ -114,11 +105,11 @@ namespace PersonalFinanceManagement
 
             ExpenseTransaction et = new ExpenseTransaction
             {
-                Amount = money,
-                Money = new Money { Amount = money, Currency = Currency },
+                Amount = money.Amount,
+                Money = money,
                 Description = text,
                 DateTime = DateTime.Now,
-                ExpenseCategory = (ExpenseType)expenseType
+                ExpenseCategory = expenseType
             };
             operations.Add(et);
         }
@@ -138,7 +129,7 @@ namespace PersonalFinanceManagement
             return operations.OfType<ExpenseTransaction>().Sum(expense => expense.Money.Amount);
         }
 
-        public double TotalBalance => CalculateTotalIncome() - CalculateTotalExpense();  // ✅ Added for test
+        public double TotalBalance => CalculateTotalIncome() - CalculateTotalExpense();
 
         public string GetStatistics(DateTime startDate, DateTime endDate)
         {
