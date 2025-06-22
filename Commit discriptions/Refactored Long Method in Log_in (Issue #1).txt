@@ -1,0 +1,4 @@
+"Refactored Long Method in Log_in (Issue #1)
+Refactoring Method: Extract Method.
+Why: The original Log_in method was doing multiple things (authentication, wallet handling, and menu loop). Extracting each responsibility into its own method improves clarity and SRP compliance.
+Conclusion: Improves readability, testability, and separation of concerns."
