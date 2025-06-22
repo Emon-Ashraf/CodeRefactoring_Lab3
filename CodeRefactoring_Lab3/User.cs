@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace PersonalFinanceManagement
 {
@@ -9,35 +7,20 @@ namespace PersonalFinanceManagement
     {
         public string Name { get; set; }
         public string Email { get; set; }
-        public string PasswordHash { get; set; }
+        public Password Password { get; set; }
         private List<Wallet> wallets;
 
-        public User(string name, string email, string password)
+        public User(string name, string email, string plainTextPassword)
         {
             Name = name;
             Email = email;
-            PasswordHash = HashPassword(password);
+            Password = new Password(plainTextPassword);
             wallets = new List<Wallet>();
         }
 
-        public bool Authenticate(string password)
+        public bool Authenticate(string plainTextPassword)
         {
-            string hashedPassword = HashPassword(password);
-            return PasswordHash.Equals(hashedPassword);
-        }
-
-        private string HashPassword(string password)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < hashedBytes.Length; i++)
-                {
-                    builder.Append(hashedBytes[i].ToString("x2"));
-                }
-                return builder.ToString();
-            }
+            return Password.Verify(plainTextPassword);
         }
 
         public void CreateWallet(string walletName, Currency currency)
@@ -113,14 +96,9 @@ namespace PersonalFinanceManagement
 
         public string GetStatistics(DateTime startDate, DateTime endDate)
         {
-            if (ActiveWallet != null)
-            {
-                return ActiveWallet.GetStatistics(startDate, endDate);
-            }
-            else
-            {
-                return "Please create/select a wallet to view statistics.";
-            }
+            return ActiveWallet != null
+                ? ActiveWallet.GetStatistics(startDate, endDate)
+                : "Please create/select a wallet to view statistics.";
         }
     }
 }
