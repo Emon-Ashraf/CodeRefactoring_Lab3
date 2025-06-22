@@ -1,0 +1,19 @@
+Description of the shortcoming:
+Name: Data Clumps in Wallet Methods
+Short Description: The methods `AddIncome` and `AddExpense` in the `Wallet` class repeated the same group of parameters and logic for validating input, creating transaction objects, and assigning common fields. This violates the DRY principle and leads to duplicated, fragile code.
+
+Brief description of the selected refactoring method:
+Method: Extract Method & Introduce Parameter Object
+We extracted common validation and transaction construction logic into two separate private methods: `ValidateTransactionInputs()` and `CreateBaseTransaction<T>()`. This modularization ensures that the shared logic is only written once and reused by both `AddIncome` and `AddExpense`.
+
+WHY it is chosen:
+This method was chosen because the duplicated logic across income and expense transactions created maintenance risk and violated clean code principles. If future changes are required (e.g., new validation rules or logging), updating both methods separately could cause inconsistencies and bugs. By centralizing this logic:
+- We ensure consistent behavior between incomes and expenses.
+- We make the code easier to read and debug.
+- We support future extensibility for new transaction types with minimal effort.
+
+Conclusion:
+The readability of the code has improved because:
+- Each method (`AddIncome`, `AddExpense`) now focuses only on behavior specific to its category.
+- Shared logic is moved out of the way, making the code more declarative and intention-revealing.
+- Reduced code duplication minimizes cognitive load and improves long-term maintainability.
