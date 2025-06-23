@@ -145,6 +145,31 @@ namespace PersonalFinanceManagement
 
 
         //
+
+        private static void HandleTransaction<TEnum>(
+    string prompt,
+    Func<TEnum, Money, string, string> processFunc
+) where TEnum : Enum
+        {
+            if (activeUser == null)
+            {
+                Console.WriteLine("Login!");
+                return;
+            }
+
+            double amount = GetValidAmount($"{prompt}");
+            TEnum category = GetValidEnum<TEnum>($"{prompt} type");
+
+            Console.Write("Desc: ");
+            string desc = Console.ReadLine();
+
+            var money = new Money(amount, activeUser.ActiveWallet.Currency);
+            string result = processFunc(category, money, desc);
+
+            Console.WriteLine(result);
+        }
+
+
         private static double GetValidAmount(string prompt)
         {
             Console.Write($"{prompt}? ");
@@ -179,40 +204,29 @@ namespace PersonalFinanceManagement
 
         private static void DoIncome()
         {
-            if (activeUser != null)
-            {
-                double m = GetValidAmount("Income");
-                IncomeType typ = GetValidEnum<IncomeType>("Income type");
-
-
-                Console.Write("Desc: ");
-                string d = Console.ReadLine();
-
-                Money money = new Money(m, activeUser.ActiveWallet.Currency);
-                activeUser.AddIncome(typ, money, d);
-
-                Console.WriteLine("Okay.");
-            }
-            else Console.WriteLine("Login!");
+            HandleTransaction<IncomeType>(
+                "Income",
+                (type, money, desc) =>
+                {
+                    activeUser.AddIncome(type, money, desc);
+                    return "Income added.";
+                }
+            );
         }
+
 
         private static void DoExpense()
         {
-            if (activeUser != null)
-            {
-                double m = GetValidAmount("Expense");
-                ExpenseType typ = GetValidEnum<ExpenseType>("Expense type");
-
-                Console.Write("Desc: ");
-                string d = Console.ReadLine();
-
-                Money money = new Money(m, activeUser.ActiveWallet.Currency);
-                activeUser.AddExpense(typ, money, d);
-
-                Console.WriteLine("Okay.");
-            }
-            else Console.WriteLine("Login!");
+            HandleTransaction<ExpenseType>(
+                "Expense",
+                (type, money, desc) =>
+                {
+                    activeUser.AddExpense(type, money, desc);
+                    return "Expense added.";
+                }
+            );
         }
+
 
         private static void Seewallet()
         {
@@ -284,4 +298,6 @@ namespace PersonalFinanceManagement
             return Storage.Authenticate(email, password);
         }
     }
+
+
 }
