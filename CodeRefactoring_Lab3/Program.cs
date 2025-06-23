@@ -122,16 +122,20 @@ namespace PersonalFinanceManagement
             string n = Console.ReadLine();
 
             Console.WriteLine("Currency:");
-            foreach (Currency c in Enum.GetValues(typeof(Currency)))
+            var currencies = new List<Currency>(Currency.All());
+            for (int i = 0; i < currencies.Count; i++)
             {
-                Console.WriteLine($"{(int)c}. {c}");
+                Console.WriteLine($"{i + 1}. {currencies[i].Code} ({currencies[i].Symbol})");
             }
 
-            Console.Write("Pick number: ");
             int t;
-            while (!int.TryParse(Console.ReadLine(), out t) || !Enum.IsDefined(typeof(Currency), t)) Console.WriteLine("Nope again.");
+            while (!int.TryParse(Console.ReadLine(), out t) || t < 1 || t > currencies.Count)
+            {
+                Console.WriteLine("Nope again.");
+            }
 
-            Currency curr = (Currency)t;
+            Currency curr = currencies[t - 1];
+
 
             Console.Write("Amount: ");
             double a;

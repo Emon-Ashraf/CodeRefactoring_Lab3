@@ -5,6 +5,7 @@
         public double Amount { get; }
         public Currency Currency { get; }
 
+
         public Money(double amount, Currency currency)
         {
             if (amount < 0)
