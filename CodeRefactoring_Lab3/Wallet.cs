@@ -92,49 +92,27 @@ namespace PersonalFinanceManagement
 
         public string ViewWalletDetails()
         {
-            return $"Wallet: {Name}\nCurrency: {Currency}\nOperations Count: {operations.Count}";
+            return WalletReportGenerator.ViewWalletDetails(this, operations);
         }
+
 
         public double CalculateTotalIncome()
         {
-            return operations.OfType<IncomeTransaction>().Sum(income => income.Money.Amount);
+            return TransactionCalculator.CalculateTotalIncome(operations);
         }
 
         public double CalculateTotalExpense()
         {
-            return operations.OfType<ExpenseTransaction>().Sum(expense => expense.Money.Amount);
+            return TransactionCalculator.CalculateTotalExpense(operations);
         }
 
-        public double TotalBalance => CalculateTotalIncome() - CalculateTotalExpense();
+        public double TotalBalance => TransactionCalculator.TotalBalance(operations);
+
 
         public string GetStatistics(DateTime startDate, DateTime endDate)
         {
-            var operationsWithinRange = operations
-                .Where(op => op.DateTime >= startDate && op.DateTime <= endDate)
-                .ToList();
-
-            double totalIncome = operationsWithinRange
-                .OfType<IncomeTransaction>()
-                .Sum(income => income.Amount);
-
-            double totalExpense = operationsWithinRange
-                .OfType<ExpenseTransaction>()
-                .Sum(expense => expense.Amount);
-
-            int incomeCount = operationsWithinRange.OfType<IncomeTransaction>().Count();
-            double averageIncome = incomeCount > 0 ? totalIncome / incomeCount : 0;
-
-            double highestExpense = operationsWithinRange.OfType<ExpenseTransaction>().Any()
-                ? operationsWithinRange.OfType<ExpenseTransaction>().Max(expense => expense.Amount)
-                : 0;
-
-            string statisticsReport = $"Statistics for {Name} from {startDate:yyyy-MM-dd} to {endDate:yyyy-MM-dd}:\n";
-            statisticsReport += $"Total Income: {totalIncome}\n";
-            statisticsReport += $"Total Expense: {totalExpense}\n";
-            statisticsReport += $"Average Income: {averageIncome}\n";
-            statisticsReport += $"Highest Expense: {highestExpense}\n";
-
-            return statisticsReport;
+            return WalletReportGenerator.GetStatistics(Name, operations, startDate, endDate);
         }
+
     }
 }
