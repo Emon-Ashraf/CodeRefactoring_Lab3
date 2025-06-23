@@ -1,10 +1,22 @@
-﻿using PersonalFinanceManagement;
+﻿using System;
 
-public class IncomeTransaction : Operation
+namespace PersonalFinanceManagement
 {
-    public IncomeType IncomeCategory { get; set; }
+    public class IncomeTransaction : Operation
+    {
+        public IncomeType IncomeCategory { get; private set; }
+        public override string Category => Enum.GetName(typeof(IncomeType), IncomeCategory);
 
-    public override string Category => Enum.GetName(typeof(IncomeType), IncomeCategory);
-    // Other properties in the IncomeTransaction class...
+        private IncomeTransaction() { }
 
+        public static IncomeTransaction Create(IncomeType type, Money money, string description)
+        {
+            var transaction = new IncomeTransaction
+            {
+                IncomeCategory = type
+            };
+            transaction.Validate(description, money);
+            return transaction;
+        }
+    }
 }

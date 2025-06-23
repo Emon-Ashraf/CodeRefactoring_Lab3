@@ -26,17 +26,7 @@ namespace PersonalFinanceManagement
         Other
     }
 
-    public class IncomeTransaction : Operation
-    {
-        public IncomeType IncomeCategory { get; set; }
-        public override string Category => IncomeCategory.ToString();
-    }
-
-    public class ExpenseTransaction : Operation
-    {
-        public ExpenseType ExpenseCategory { get; set; }
-        public override string Category => ExpenseCategory.ToString();
-    }
+   
 
     public class Wallet
     {
@@ -78,15 +68,9 @@ namespace PersonalFinanceManagement
                 throw new ArgumentException("Description cannot be empty.");
             }
 
-            IncomeTransaction it = new IncomeTransaction
-            {
-                Amount = money.Amount,
-                Money = money,
-                Description = text,
-                DateTime = DateTime.Now,
-                IncomeCategory = incomeType
-            };
-            operations.Add(it);
+            IncomeTransaction it = IncomeTransaction.Create(incomeType, money, text);
+
+
         }
 
         public void AddExpense(ExpenseType expenseType, Money money, string text)
@@ -101,15 +85,9 @@ namespace PersonalFinanceManagement
                 throw new ArgumentException("Description cannot be empty.");
             }
 
-            ExpenseTransaction et = new ExpenseTransaction
-            {
-                Amount = money.Amount,
-                Money = money,
-                Description = text,
-                DateTime = DateTime.Now,
-                ExpenseCategory = expenseType
-            };
-            operations.Add(et);
+            ExpenseTransaction et = ExpenseTransaction.Create(expenseType, money, text);
+
+
         }
 
         public string ViewWalletDetails()

@@ -1,10 +1,22 @@
-﻿using PersonalFinanceManagement;
+﻿using System;
 
-public class ExpenseTransaction : Operation
+namespace PersonalFinanceManagement
 {
-    public ExpenseType ExpenseCategory { get; set; }
+    public class ExpenseTransaction : Operation
+    {
+        public ExpenseType ExpenseCategory { get; private set; }
+        public override string Category => Enum.GetName(typeof(ExpenseType), ExpenseCategory);
 
-    public override string Category => Enum.GetName(typeof(ExpenseType), ExpenseCategory);
+        private ExpenseTransaction() { }
 
-    // Other properties in the ExpenseTransaction class...
+        public static ExpenseTransaction Create(ExpenseType type, Money money, string description)
+        {
+            var transaction = new ExpenseTransaction
+            {
+                ExpenseCategory = type
+            };
+            transaction.Validate(description, money);
+            return transaction;
+        }
+    }
 }
