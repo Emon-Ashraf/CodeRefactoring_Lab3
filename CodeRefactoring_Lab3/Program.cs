@@ -139,7 +139,7 @@ namespace PersonalFinanceManagement
 
             Wallet w = new Wallet(n, curr);
             activeUser.AddWallet(w);
-            Money initial = new Money { Amount = a, Currency = curr };
+            Money initial = new Money(a, curr);
             w.AddIncome(IncomeType.Other, initial, "Initial money");
         }
 
@@ -174,8 +174,8 @@ namespace PersonalFinanceManagement
                 Console.Write("Desc: ");
                 string d = Console.ReadLine();
 
-                Money money = new Money { Amount = m, Currency = activeUser.ActiveWallet.Currency };
-                activeUser.ActiveWallet.AddIncome(typ, money, d);  // ✅ CORRECT
+                Money money = new Money(m, activeUser.ActiveWallet.Currency);
+                activeUser.ActiveWallet.AddIncome(typ, money, d);
                 Console.WriteLine("Okay.");
             }
             else Console.WriteLine("Login!");
@@ -212,8 +212,8 @@ namespace PersonalFinanceManagement
                 Console.Write("Desc: ");
                 string d = Console.ReadLine();
 
-                Money money = new Money { Amount = m, Currency = activeUser.ActiveWallet.Currency };
-                activeUser.ActiveWallet.AddExpense(typ, money, d);  // ✅ CORRECT
+                Money money = new Money(m, activeUser.ActiveWallet.Currency);
+                activeUser.ActiveWallet.AddExpense(typ, money, d);
                 Console.WriteLine("Okay.");
             }
             else Console.WriteLine("Login!");

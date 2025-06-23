@@ -29,14 +29,12 @@ namespace PersonalFinanceManagement
     public class IncomeTransaction : Operation
     {
         public IncomeType IncomeCategory { get; set; }
-
         public override string Category => IncomeCategory.ToString();
     }
 
     public class ExpenseTransaction : Operation
     {
         public ExpenseType ExpenseCategory { get; set; }
-
         public override string Category => ExpenseCategory.ToString();
     }
 
@@ -54,7 +52,7 @@ namespace PersonalFinanceManagement
 
             if (startingAmount > 0)
             {
-                AddIncome(IncomeType.Other, new Money { Amount = startingAmount, Currency = currency }, "Initial balance");
+                AddIncome(IncomeType.Other, new Money(startingAmount, currency), "Initial balance");
             }
         }
 

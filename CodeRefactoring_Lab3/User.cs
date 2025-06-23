@@ -72,7 +72,7 @@ namespace PersonalFinanceManagement
         {
             if (ActiveWallet != null)
             {
-                var money = new Money { Amount = amount, Currency = ActiveWallet.Currency };
+                var money = new Money(amount, ActiveWallet.Currency);
                 ActiveWallet.AddIncome(selectedIncomeType, money, description);
             }
             else
@@ -85,7 +85,7 @@ namespace PersonalFinanceManagement
         {
             if (ActiveWallet != null)
             {
-                var money = new Money { Amount = amount, Currency = ActiveWallet.Currency };
+                var money = new Money(amount, ActiveWallet.Currency);
                 ActiveWallet.AddExpense(selectedExpenseType, money, description);
             }
             else
