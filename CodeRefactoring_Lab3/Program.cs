@@ -143,34 +143,48 @@ namespace PersonalFinanceManagement
             w.AddIncome(IncomeType.Other, initial, "Initial money");
         }
 
+
+        //
+        private static double GetValidAmount(string prompt)
+        {
+            Console.Write($"{prompt}? ");
+            string input = Console.ReadLine();
+            double value;
+            while (!double.TryParse(input, out value) || value <= 0)
+            {
+                Console.WriteLine("Nope.");
+                input = Console.ReadLine();
+            }
+            return value;
+        }
+
+        private static T GetValidEnum<T>(string prompt) where T : Enum
+        {
+            Console.WriteLine($"What type?");
+            foreach (T item in Enum.GetValues(typeof(T)))
+            {
+                Console.WriteLine($"{(int)(object)item}. {item}");
+            }
+
+            int selection;
+            string input = Console.ReadLine();
+            while (!int.TryParse(input, out selection) || !Enum.IsDefined(typeof(T), selection))
+            {
+                Console.WriteLine("Nope again.");
+                input = Console.ReadLine();
+            }
+
+            return (T)(object)selection;
+        }
+
         private static void DoIncome()
         {
             if (activeUser != null)
             {
-                Console.Write("Income? ");
-                string s = Console.ReadLine();
-                double m;
-                while (!double.TryParse(s, out m) || m <= 0)
-                {
-                    Console.WriteLine("Nope.");
-                    s = Console.ReadLine();
-                }
+                double m = GetValidAmount("Income");
+                IncomeType typ = GetValidEnum<IncomeType>("Income type");
 
-                Console.WriteLine("What type?");
-                foreach (IncomeType i in Enum.GetValues(typeof(IncomeType)))
-                {
-                    Console.WriteLine($"{(int)i}. {i}");
-                }
 
-                int it;
-                string sit = Console.ReadLine();
-                while (!int.TryParse(sit, out it) || !Enum.IsDefined(typeof(IncomeType), it))
-                {
-                    Console.WriteLine("Nope again.");
-                    sit = Console.ReadLine();
-                }
-
-                IncomeType typ = (IncomeType)it;
                 Console.Write("Desc: ");
                 string d = Console.ReadLine();
 
@@ -185,30 +199,9 @@ namespace PersonalFinanceManagement
         {
             if (activeUser != null)
             {
-                Console.Write("Expense? ");
-                string s = Console.ReadLine();
-                double m;
-                while (!double.TryParse(s, out m) || m <= 0)
-                {
-                    Console.WriteLine("Nope.");
-                    s = Console.ReadLine();
-                }
+                double m = GetValidAmount("Expense");
+                ExpenseType typ = GetValidEnum<ExpenseType>("Expense type");
 
-                Console.WriteLine("What type?");
-                foreach (ExpenseType i in Enum.GetValues(typeof(ExpenseType)))
-                {
-                    Console.WriteLine($"{(int)i}. {i}");
-                }
-
-                int it;
-                string sit = Console.ReadLine();
-                while (!int.TryParse(sit, out it) || !Enum.IsDefined(typeof(ExpenseType), it))
-                {
-                    Console.WriteLine("Nope again.");
-                    sit = Console.ReadLine();
-                }
-
-                ExpenseType typ = (ExpenseType)it;
                 Console.Write("Desc: ");
                 string d = Console.ReadLine();
 
