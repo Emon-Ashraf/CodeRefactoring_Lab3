@@ -68,36 +68,20 @@ namespace PersonalFinanceManagement
             ActiveWallet = wallet;
         }
 
-        public void AddIncome(IncomeType selectedIncomeType, double amount, string description)
+        public void AddIncome(IncomeType type, Money money, string description)
         {
-            if (ActiveWallet != null)
-            {
-                var money = new Money(amount, ActiveWallet.Currency);
-                ActiveWallet.AddIncome(selectedIncomeType, money, description);
-            }
-            else
-            {
-                Console.WriteLine("Please create/select a wallet before adding income.");
-            }
+            ActiveWallet?.AddIncome(type, money, description);
         }
 
-        public void AddExpense(ExpenseType selectedExpenseType, double amount, string description)
+        public void AddExpense(ExpenseType type, Money money, string description)
         {
-            if (ActiveWallet != null)
-            {
-                var money = new Money(amount, ActiveWallet.Currency);
-                ActiveWallet.AddExpense(selectedExpenseType, money, description);
-            }
-            else
-            {
-                Console.WriteLine("Please create/select a wallet before adding expense.");
-            }
+            ActiveWallet?.AddExpense(type, money, description);
         }
 
-        public string GetStatistics(DateTime startDate, DateTime endDate)
+        public string ViewStatistics(DateTime from, DateTime to)
         {
             return ActiveWallet != null
-                ? ActiveWallet.GetStatistics(startDate, endDate)
+                ? ActiveWallet.GetStatistics(from, to)
                 : "Please create/select a wallet to view statistics.";
         }
     }

@@ -189,7 +189,8 @@ namespace PersonalFinanceManagement
                 string d = Console.ReadLine();
 
                 Money money = new Money(m, activeUser.ActiveWallet.Currency);
-                activeUser.ActiveWallet.AddIncome(typ, money, d);
+                activeUser.AddIncome(typ, money, d);
+
                 Console.WriteLine("Okay.");
             }
             else Console.WriteLine("Login!");
@@ -206,7 +207,8 @@ namespace PersonalFinanceManagement
                 string d = Console.ReadLine();
 
                 Money money = new Money(m, activeUser.ActiveWallet.Currency);
-                activeUser.ActiveWallet.AddExpense(typ, money, d);
+                activeUser.AddExpense(typ, money, d);
+
                 Console.WriteLine("Okay.");
             }
             else Console.WriteLine("Login!");
@@ -249,7 +251,8 @@ namespace PersonalFinanceManagement
                     Console.WriteLine("Try again.");
                 }
 
-                Console.WriteLine(activeUser.GetStatistics(a, b));
+                Console.WriteLine(activeUser.ViewStatistics(a, b));
+
             }
         }
 
