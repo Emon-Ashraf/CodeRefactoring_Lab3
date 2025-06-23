@@ -10,54 +10,58 @@ namespace PersonalFinanceManagement
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to Code Refactoring Lab Edition!");
+            Console.WriteLine("Welcome to Personal Finance Management System!");
 
             while (true)
             {
-                Console.WriteLine("\n1. R");
-                Console.WriteLine("2. L");
-                Console.WriteLine("3. E");
-                Console.Write("Choice: ");
+                Console.WriteLine("\nMenu:");
+                Console.WriteLine("1. Register");
+                Console.WriteLine("2. Login");
+                Console.WriteLine("3. Exit");
+                Console.Write("Enter your choice: ");
 
-                string x = Console.ReadLine();
+                string choice = Console.ReadLine();
 
-                if (x == "1") Reg();
-                else if (x == "2") LogIn();
-                else if (x == "3") return;
-                else Console.WriteLine("Nope.");
+                if (choice == "1") RegisterUser();
+                else if (choice == "2") LoginUser();
+                else if (choice == "3") return;
+                else Console.WriteLine("Invalid option. Please try again.");
             }
         }
 
-        private static void Reg()
+        private static void RegisterUser()
         {
-            Console.Write("\nName? ");
-            string a = Console.ReadLine();
-            Console.Write("Email? ");
-            string b = Console.ReadLine();
-            Console.Write("Pass? ");
-            string c = Console.ReadLine();
+            Console.Write("\nEnter your name: ");
+            string name = Console.ReadLine();
 
-            User u = new User(a, b, c);
-            users.Add(u);
-            Console.WriteLine("Done!");
+            Console.Write("Enter your email: ");
+            string email = Console.ReadLine();
+
+            Console.Write("Enter your password: ");
+            string password = Console.ReadLine();
+
+            User user = new User(name, email, password);
+            users.Add(user);
+            Console.WriteLine("Registration successful!");
         }
 
-        private static void LogIn()
+        private static void LoginUser()
         {
-            Console.Write("Email? ");
-            string e = Console.ReadLine();
-            Console.Write("Pass? ");
-            string p = Console.ReadLine();
+            Console.Write("Email: ");
+            string email = Console.ReadLine();
 
-            if (AuthenticateAndSetUser(e, p))
+            Console.Write("Password: ");
+            string password = Console.ReadLine();
+
+            if (AuthenticateAndSetUser(email, password))
             {
-                Console.WriteLine($"Hi, {activeUser.Name}");
+                Console.WriteLine($"\nWelcome, {activeUser.Name}!");
                 SelectOrCreateWallet();
                 RunUserMenu();
             }
             else
             {
-                Console.WriteLine("Wrong...");
+                Console.WriteLine("Login failed. Incorrect credentials.");
             }
         }
 
@@ -69,23 +73,29 @@ namespace PersonalFinanceManagement
 
         private static void SelectOrCreateWallet()
         {
-            var w = activeUser.GetWallets();
-            if (w.Count == 0)
+            var wallets = activeUser.GetWallets();
+            if (wallets.Count == 0)
             {
-                Console.WriteLine("No wallet? Make one!");
-                CW();
+                Console.WriteLine("You don't have a wallet yet. Let's create one.");
+                CreateWallet();
             }
             else
             {
-                for (int i = 0; i < w.Count; i++) Console.WriteLine($"{i + 1}. {w[i].Name}");
-                Console.WriteLine($"{w.Count + 1}. New one?");
-                Console.Write("Pick: ");
+                Console.WriteLine("Available wallets:");
+                for (int i = 0; i < wallets.Count; i++)
+                    Console.WriteLine($"{i + 1}. {wallets[i].Name}");
 
-                int y;
-                while (!int.TryParse(Console.ReadLine(), out y) || y < 1 || y > w.Count + 1) Console.WriteLine("Try again.");
+                Console.WriteLine($"{wallets.Count + 1}. Create a new wallet");
+                Console.Write("Select a wallet: ");
 
-                if (y <= w.Count) activeUser.SelectActiveWallet(w[y - 1]);
-                else CW();
+                int selectedIndex;
+                while (!int.TryParse(Console.ReadLine(), out selectedIndex) || selectedIndex < 1 || selectedIndex > wallets.Count + 1)
+                    Console.WriteLine("Invalid input. Try again.");
+
+                if (selectedIndex <= wallets.Count)
+                    activeUser.SelectActiveWallet(wallets[selectedIndex - 1]);
+                else
+                    CreateWallet();
             }
         }
 
@@ -93,208 +103,183 @@ namespace PersonalFinanceManagement
         {
             while (true)
             {
-                Console.WriteLine("\n1. $+");
-                Console.WriteLine("2. $-");
-                Console.WriteLine("3. Info");
-                Console.WriteLine("4. Stats");
-                Console.WriteLine("5. X Wallet");
-                Console.WriteLine("6. Bye");
-                Console.Write("Pick: ");
+                Console.WriteLine("\nWallet Menu:");
+                Console.WriteLine("1. Add Income");
+                Console.WriteLine("2. Add Expense");
+                Console.WriteLine("3. View Wallet");
+                Console.WriteLine("4. View Statistics");
+                Console.WriteLine("5. Delete Wallet");
+                Console.WriteLine("6. Logout");
+                Console.Write("Choose an option: ");
 
-                string opt = Console.ReadLine();
+                string option = Console.ReadLine();
 
-                switch (opt)
+                switch (option)
                 {
-                    case "1": DoIncome(); break;
-                    case "2": DoExpense(); break;
-                    case "3": Seewallet(); break;
-                    case "4": Stats(); break;
-                    case "5": DW(); break;
+                    case "1": HandleIncome(); break;
+                    case "2": HandleExpense(); break;
+                    case "3": ViewWalletDetailsMenu(); break;
+                    case "4": ShowStatistics(); break;
+                    case "5": DeleteWallet(); break;
                     case "6": return;
-                    default: Console.WriteLine("Hmm?"); break;
+                    default: Console.WriteLine("Unknown option. Please try again."); break;
                 }
             }
         }
 
-        private static void CW()
+        private static void CreateWallet()
         {
-            Console.Write("Wallet name: ");
-            string n = Console.ReadLine();
+            Console.Write("Enter wallet name: ");
+            string walletName = Console.ReadLine();
 
-            Console.WriteLine("Currency:");
+            Console.WriteLine("Select a currency:");
             var currencies = new List<Currency>(Currency.All());
             for (int i = 0; i < currencies.Count; i++)
-            {
                 Console.WriteLine($"{i + 1}. {currencies[i].Code} ({currencies[i].Symbol})");
-            }
 
-            int t;
-            while (!int.TryParse(Console.ReadLine(), out t) || t < 1 || t > currencies.Count)
-            {
-                Console.WriteLine("Nope again.");
-            }
+            int selectedCurrencyIndex;
+            while (!int.TryParse(Console.ReadLine(), out selectedCurrencyIndex) || selectedCurrencyIndex < 1 || selectedCurrencyIndex > currencies.Count)
+                Console.WriteLine("Invalid selection. Try again.");
 
-            Currency curr = currencies[t - 1];
+            Currency selectedCurrency = currencies[selectedCurrencyIndex - 1];
 
+            Console.Write("Enter starting amount: ");
+            double amount;
+            while (!double.TryParse(Console.ReadLine(), out amount) || amount < 0)
+                Console.WriteLine("Amount must be a positive number. Try again.");
 
-            Console.Write("Amount: ");
-            double a;
-            while (!double.TryParse(Console.ReadLine(), out a) || a < 0) Console.WriteLine("Hmm again.");
-
-            Wallet w = new Wallet(n, curr);
-            activeUser.AddWallet(w);
-            Money initial = new Money(a, curr);
-            w.AddIncome(IncomeType.Other, initial, "Initial money");
+            Wallet wallet = new Wallet(walletName, selectedCurrency);
+            activeUser.AddWallet(wallet);
+            Money initial = new Money(amount, selectedCurrency);
+            wallet.AddIncome(IncomeType.Other, initial, "Initial balance");
+            Console.WriteLine("Wallet created successfully.");
         }
 
-
-        //
-
-        private static void HandleTransaction<TEnum>(
-    string prompt,
-    Func<TEnum, Money, string, string> processFunc
-) where TEnum : Enum
+        private static void HandleTransaction<TEnum>(string typeLabel, Func<TEnum, Money, string, string> processFunc) where TEnum : Enum
         {
             if (activeUser == null)
             {
-                Console.WriteLine("Login!");
+                Console.WriteLine("You must log in first.");
                 return;
             }
 
-            double amount = GetValidAmount($"{prompt}");
-            TEnum category = GetValidEnum<TEnum>($"{prompt} type");
+            double amount = GetValidAmount($"{typeLabel} amount");
+            TEnum category = GetValidEnum<TEnum>($"{typeLabel} type");
 
-            Console.Write("Desc: ");
-            string desc = Console.ReadLine();
+            Console.Write("Enter a description: ");
+            string description = Console.ReadLine();
 
             var money = new Money(amount, activeUser.ActiveWallet.Currency);
-            string result = processFunc(category, money, desc);
+            string result = processFunc(category, money, description);
 
             Console.WriteLine(result);
         }
 
+        private static void HandleIncome()
+        {
+            HandleTransaction<IncomeType>("Income", (type, money, description) =>
+            {
+                activeUser.AddIncome(type, money, description);
+                return "Income recorded successfully.";
+            });
+        }
+
+        private static void HandleExpense()
+        {
+            HandleTransaction<ExpenseType>("Expense", (type, money, description) =>
+            {
+                activeUser.AddExpense(type, money, description);
+                return "Expense recorded successfully.";
+            });
+        }
 
         private static double GetValidAmount(string prompt)
         {
-            Console.Write($"{prompt}? ");
+            Console.Write($"{prompt}: ");
             string input = Console.ReadLine();
             double value;
             while (!double.TryParse(input, out value) || value <= 0)
             {
-                Console.WriteLine("Nope.");
+                Console.WriteLine("Invalid amount. Try again.");
                 input = Console.ReadLine();
             }
             return value;
         }
 
-        private static T GetValidEnum<T>(string prompt) where T : Enum
+        private static TEnum GetValidEnum<TEnum>(string prompt) where TEnum : Enum
         {
-            Console.WriteLine($"What type?");
-            foreach (T item in Enum.GetValues(typeof(T)))
-            {
+            Console.WriteLine($"Select {prompt}:");
+            foreach (TEnum item in Enum.GetValues(typeof(TEnum)))
                 Console.WriteLine($"{(int)(object)item}. {item}");
-            }
 
             int selection;
             string input = Console.ReadLine();
-            while (!int.TryParse(input, out selection) || !Enum.IsDefined(typeof(T), selection))
+            while (!int.TryParse(input, out selection) || !Enum.IsDefined(typeof(TEnum), selection))
             {
-                Console.WriteLine("Nope again.");
+                Console.WriteLine("Invalid selection. Try again.");
                 input = Console.ReadLine();
             }
 
-            return (T)(object)selection;
+            return (TEnum)(object)selection;
         }
 
-        private static void DoIncome()
-        {
-            HandleTransaction<IncomeType>(
-                "Income",
-                (type, money, desc) =>
-                {
-                    activeUser.AddIncome(type, money, desc);
-                    return "Income added.";
-                }
-            );
-        }
-
-
-        private static void DoExpense()
-        {
-            HandleTransaction<ExpenseType>(
-                "Expense",
-                (type, money, desc) =>
-                {
-                    activeUser.AddExpense(type, money, desc);
-                    return "Expense added.";
-                }
-            );
-        }
-
-
-        private static void Seewallet()
+        private static void ViewWalletDetailsMenu()
         {
             if (activeUser != null)
             {
-                var w = activeUser.GetWallets();
-                for (int i = 0; i < w.Count; i++) Console.WriteLine($"{i + 1}. {w[i].Name}");
+                var wallets = activeUser.GetWallets();
+                for (int i = 0; i < wallets.Count; i++)
+                    Console.WriteLine($"{i + 1}. {wallets[i].Name}");
 
-                Console.Write("Pick one: ");
-                int idx;
-                while (!int.TryParse(Console.ReadLine(), out idx) || idx < 1 || idx > w.Count)
-                {
-                    Console.WriteLine("Nope.");
-                }
+                Console.Write("Select a wallet to view: ");
+                int index;
+                while (!int.TryParse(Console.ReadLine(), out index) || index < 1 || index > wallets.Count)
+                    Console.WriteLine("Invalid selection. Try again.");
 
-                Wallet sel = w[idx - 1];
-                Console.WriteLine(sel.ViewWalletDetails());
+                Wallet selected = wallets[index - 1];
+                Console.WriteLine(selected.ViewWalletDetails());
             }
         }
 
-        private static void Stats()
+        private static void ShowStatistics()
         {
             if (activeUser != null)
             {
-                Console.Write("Start date (yyyy-MM-dd): ");
-                DateTime a;
-                while (!DateTime.TryParse(Console.ReadLine(), out a))
-                {
-                    Console.WriteLine("Try again.");
-                }
+                Console.Write("Enter start date (yyyy-MM-dd): ");
+                DateTime startDate;
+                while (!DateTime.TryParse(Console.ReadLine(), out startDate))
+                    Console.WriteLine("Invalid format. Try again (yyyy-MM-dd).");
 
-                Console.Write("End date (yyyy-MM-dd): ");
-                DateTime b;
-                while (!DateTime.TryParse(Console.ReadLine(), out b))
-                {
-                    Console.WriteLine("Try again.");
-                }
+                Console.Write("Enter end date (yyyy-MM-dd): ");
+                DateTime endDate;
+                while (!DateTime.TryParse(Console.ReadLine(), out endDate))
+                    Console.WriteLine("Invalid format. Try again (yyyy-MM-dd).");
 
-                Console.WriteLine(activeUser.ViewStatistics(a, b));
-
+                Console.WriteLine(activeUser.ViewStatistics(startDate, endDate));
             }
         }
 
-        private static void DW()
+        private static void DeleteWallet()
         {
             if (activeUser != null)
             {
-                var w = activeUser.GetWallets();
-                for (int i = 0; i < w.Count; i++) Console.WriteLine($"{i + 1}. {w[i].Name}");
+                var wallets = activeUser.GetWallets();
+                for (int i = 0; i < wallets.Count; i++)
+                    Console.WriteLine($"{i + 1}. {wallets[i].Name}");
 
-                Console.Write("Pick one to delete: ");
-                int idx;
-                while (!int.TryParse(Console.ReadLine(), out idx) || idx < 1 || idx > w.Count)
-                {
-                    Console.WriteLine("Nope.");
-                }
+                Console.Write("Select a wallet to delete: ");
+                int index;
+                while (!int.TryParse(Console.ReadLine(), out index) || index < 1 || index > wallets.Count)
+                    Console.WriteLine("Invalid input. Try again.");
 
-                activeUser.RemoveWallet(w[idx - 1]);
+                activeUser.RemoveWallet(wallets[index - 1]);
+                Console.WriteLine("Wallet deleted.");
             }
         }
 
         private static User Authenticate(string email, string password)
         {
-            return users.Find(x => x.Email == email && x.Authenticate(password));
+            return users.Find(user => user.Email == email && user.Authenticate(password));
         }
 
         public static User TryAuthenticate(string email, string password)
@@ -302,6 +287,4 @@ namespace PersonalFinanceManagement
             return Storage.Authenticate(email, password);
         }
     }
-
-
 }

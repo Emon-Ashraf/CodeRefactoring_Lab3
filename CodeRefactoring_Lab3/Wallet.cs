@@ -26,24 +26,22 @@ namespace PersonalFinanceManagement
         Other
     }
 
-   
-
     public class Wallet
     {
         public string Name { get; set; }
-        // change operations field type comment-only; still List<Operation>
         private List<Operation> operations;
         public Currency Currency { get; private set; }
 
-        public Wallet(string name, Currency currency, double startingAmount = 0)
+        public Wallet(string name, Currency currency, double initialAmount = 0)
         {
             Name = name;
             Currency = currency;
             operations = new List<Operation>();
 
-            if (startingAmount > 0)
+            if (initialAmount > 0)
             {
-                AddIncome(IncomeType.Other, new Money(startingAmount, currency), "Initial balance");
+                var initialMoney = new Money(initialAmount, currency);
+                AddIncome(IncomeType.Other, initialMoney, "Initial balance");
             }
         }
 
@@ -52,43 +50,45 @@ namespace PersonalFinanceManagement
             operations.Add(operation);
         }
 
+        public void AddIncome(IncomeType incomeType, Money amount, string description)
+        {
+            var incomeTransaction = Transaction.CreateIncome(incomeType, amount, description);
+            operations.Add(incomeTransaction);
+        }
+
+        public void AddExpense(ExpenseType expenseType, Money amount, string description)
+        {
+            var expenseTransaction = Transaction.CreateExpense(expenseType, amount, description);
+            operations.Add(expenseTransaction);
+        }
+
         public List<Operation> GetOperationsByDateRange(DateTime fromDate, DateTime toDate)
         {
-            return operations.FindAll(op => op.DateTime >= fromDate && op.DateTime <= toDate);
+            return operations
+                .Where(op => op.DateTime >= fromDate && op.DateTime <= toDate)
+                .ToList();
         }
 
-        // AddIncome
-        public void AddIncome(IncomeType type, Money money, string text)
+        public double CalculateTotalIncome()
         {
-            var trx = Transaction.CreateIncome(type, money, text);
-            operations.Add(trx);
+            return TransactionCalculator.CalculateTotalIncome(operations);
         }
 
-        // AddExpense
-        public void AddExpense(ExpenseType type, Money money, string text)
+        public double CalculateTotalExpense()
         {
-            var trx = Transaction.CreateExpense(type, money, text);
-            operations.Add(trx);
+            return TransactionCalculator.CalculateTotalExpense(operations);
         }
+
+        public double TotalBalance => TransactionCalculator.TotalBalance(operations);
 
         public string ViewWalletDetails()
         {
             return WalletReportGenerator.ViewWalletDetails(this, operations);
         }
 
-
-
-        public double CalculateTotalIncome() => TransactionCalculator.CalculateTotalIncome(operations);
-        public double CalculateTotalExpense() => TransactionCalculator.CalculateTotalExpense(operations);
-        public double TotalBalance => TransactionCalculator.TotalBalance(operations);
-
-
-
         public string GetStatistics(DateTime startDate, DateTime endDate)
         {
             return WalletReportGenerator.GetStatistics(Name, operations, startDate, endDate);
         }
-
-
     }
 }

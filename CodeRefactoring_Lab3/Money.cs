@@ -1,44 +1,67 @@
-﻿namespace PersonalFinanceManagement
+﻿using System;
+
+namespace PersonalFinanceManagement
 {
+    /// <summary>
+    /// Represents a value object for handling monetary amounts in a specific currency.
+    /// </summary>
     public class Money
     {
         public double Amount { get; }
         public Currency Currency { get; }
 
-
         public Money(double amount, Currency currency)
         {
             if (amount < 0)
-                throw new ArgumentException("Money amount cannot be negative.");
+                throw new ArgumentException("Amount must be non-negative.", nameof(amount));
 
+            Currency = currency ?? throw new ArgumentNullException(nameof(currency));
             Amount = amount;
-            Currency = currency;
         }
 
+        /// <summary>
+        /// Returns a formatted string representation of the amount and currency.
+        /// </summary>
         public override string ToString()
         {
-            return $"{Amount:F2} {Currency}";
+            return $"{Currency.Symbol}{Amount:F2} {Currency.Code}";
         }
 
-        // Optional enhancements:
+        /// <summary>
+        /// Returns a Money object representing zero in the given currency.
+        /// </summary>
         public static Money Zero(Currency currency) => new Money(0, currency);
 
+        /// <summary>
+        /// Returns a new Money instance by adding another Money instance of the same currency.
+        /// </summary>
         public Money Add(Money other)
         {
-            if (Currency != other.Currency)
-                throw new InvalidOperationException("Cannot add money of different currencies.");
-
+            EnsureSameCurrency(other);
             return new Money(Amount + other.Amount, Currency);
         }
 
+        /// <summary>
+        /// Returns a new Money instance by subtracting another Money instance of the same currency.
+        /// </summary>
         public Money Subtract(Money other)
         {
-            if (Currency != other.Currency)
-                throw new InvalidOperationException("Cannot subtract money of different currencies.");
+            EnsureSameCurrency(other);
 
-            double newAmount = Amount - other.Amount;
-            if (newAmount < 0) throw new InvalidOperationException("Resulting money cannot be negative.");
-            return new Money(newAmount, Currency);
+            double result = Amount - other.Amount;
+            if (result < 0)
+                throw new InvalidOperationException("Subtraction would result in a negative balance.");
+
+            return new Money(result, Currency);
+        }
+
+        /// <summary>
+        /// Ensures that another Money instance has the same currency.
+        /// </summary>
+        private void EnsureSameCurrency(Money other)
+        {
+            if (Currency.Code != other.Currency.Code)
+                throw new InvalidOperationException("Currency mismatch between amounts.");
         }
     }
 }
