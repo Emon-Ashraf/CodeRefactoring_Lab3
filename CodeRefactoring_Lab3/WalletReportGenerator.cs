@@ -13,16 +13,28 @@ namespace PersonalFinanceManagement
 
         public static string GetStatistics(string walletName, List<Operation> operations, DateTime startDate, DateTime endDate)
         {
-            var range = operations.Where(op => op.DateTime >= startDate && op.DateTime <= endDate).ToList();
+            var operationsWithinRange = operations
+                .OfType<Transaction>()
+                .Where(op => op.DateTime >= startDate && op.DateTime <= endDate)
+                .ToList();
 
-            double totalIncome = range.OfType<IncomeTransaction>().Sum(op => op.Amount);
-            double totalExpense = range.OfType<ExpenseTransaction>().Sum(op => op.Amount);
-            int incomeCount = range.OfType<IncomeTransaction>().Count();
+            double totalIncome = operationsWithinRange
+                .Where(t => t.Kind == TransactionKind.Income)
+                .Sum(t => t.Amount);
+
+            double totalExpense = operationsWithinRange
+                .Where(t => t.Kind == TransactionKind.Expense)
+                .Sum(t => t.Amount);
+
+            int incomeCount = operationsWithinRange
+                .Count(t => t.Kind == TransactionKind.Income);
 
             double averageIncome = incomeCount > 0 ? totalIncome / incomeCount : 0;
-            double highestExpense = range.OfType<ExpenseTransaction>().Any()
-                ? range.OfType<ExpenseTransaction>().Max(op => op.Amount)
-                : 0;
+
+            double highestExpense = operationsWithinRange
+                .Where(t => t.Kind == TransactionKind.Expense)
+                .DefaultIfEmpty()
+                .Max(t => t?.Amount ?? 0);
 
             return $"Statistics for {walletName} from {startDate:yyyy-MM-dd} to {endDate:yyyy-MM-dd}:\n" +
                    $"Total Income: {totalIncome}\n" +
@@ -30,5 +42,6 @@ namespace PersonalFinanceManagement
                    $"Average Income: {averageIncome}\n" +
                    $"Highest Expense: {highestExpense}";
         }
+
     }
 }

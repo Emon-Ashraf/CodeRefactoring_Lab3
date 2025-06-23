@@ -31,6 +31,7 @@ namespace PersonalFinanceManagement
     public class Wallet
     {
         public string Name { get; set; }
+        // change operations field type comment-only; still List<Operation>
         private List<Operation> operations;
         public Currency Currency { get; private set; }
 
@@ -56,38 +57,18 @@ namespace PersonalFinanceManagement
             return operations.FindAll(op => op.DateTime >= fromDate && op.DateTime <= toDate);
         }
 
-        public void AddIncome(IncomeType incomeType, Money money, string text)
+        // AddIncome
+        public void AddIncome(IncomeType type, Money money, string text)
         {
-            if (money.Amount <= 0)
-            {
-                throw new ArgumentException("Income amount must be greater than 0.");
-            }
-
-            if (string.IsNullOrWhiteSpace(text))
-            {
-                throw new ArgumentException("Description cannot be empty.");
-            }
-
-            IncomeTransaction it = IncomeTransaction.Create(incomeType, money, text);
-
-
+            var trx = Transaction.CreateIncome(type, money, text);
+            operations.Add(trx);
         }
 
-        public void AddExpense(ExpenseType expenseType, Money money, string text)
+        // AddExpense
+        public void AddExpense(ExpenseType type, Money money, string text)
         {
-            if (money.Amount <= 0)
-            {
-                throw new ArgumentException("Expense amount must be greater than 0.");
-            }
-
-            if (string.IsNullOrWhiteSpace(text))
-            {
-                throw new ArgumentException("Description cannot be empty.");
-            }
-
-            ExpenseTransaction et = ExpenseTransaction.Create(expenseType, money, text);
-
-
+            var trx = Transaction.CreateExpense(type, money, text);
+            operations.Add(trx);
         }
 
         public string ViewWalletDetails()

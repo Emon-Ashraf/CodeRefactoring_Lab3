@@ -7,12 +7,18 @@ namespace PersonalFinanceManagement
     {
         public static double CalculateTotalIncome(List<Operation> operations)
         {
-            return operations.OfType<IncomeTransaction>().Sum(op => op.Money.Amount);
+            return operations
+                .OfType<Transaction>()
+                .Where(t => t.Kind == TransactionKind.Income)
+                .Sum(t => t.Money.Amount);
         }
 
         public static double CalculateTotalExpense(List<Operation> operations)
         {
-            return operations.OfType<ExpenseTransaction>().Sum(op => op.Money.Amount);
+            return operations
+                .OfType<Transaction>()
+                .Where(t => t.Kind == TransactionKind.Expense)
+                .Sum(t => t.Money.Amount);
         }
 
         public static double TotalBalance(List<Operation> operations)
