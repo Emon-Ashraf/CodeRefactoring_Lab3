@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System;
 
 namespace PersonalFinanceManagement
 {
@@ -8,12 +7,12 @@ namespace PersonalFinanceManagement
     {
         public static double CalculateTotalIncome(List<Operation> operations)
         {
-            return operations.OfType<IncomeTransaction>().Sum(i => i.Money.Amount);
+            return operations.OfType<IncomeTransaction>().Sum(op => op.Money.Amount);
         }
 
         public static double CalculateTotalExpense(List<Operation> operations)
         {
-            return operations.OfType<ExpenseTransaction>().Sum(e => e.Money.Amount);
+            return operations.OfType<ExpenseTransaction>().Sum(op => op.Money.Amount);
         }
 
         public static double TotalBalance(List<Operation> operations)

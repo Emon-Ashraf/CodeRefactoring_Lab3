@@ -96,23 +96,18 @@ namespace PersonalFinanceManagement
         }
 
 
-        public double CalculateTotalIncome()
-        {
-            return TransactionCalculator.CalculateTotalIncome(operations);
-        }
 
-        public double CalculateTotalExpense()
-        {
-            return TransactionCalculator.CalculateTotalExpense(operations);
-        }
-
+        public double CalculateTotalIncome() => TransactionCalculator.CalculateTotalIncome(operations);
+        public double CalculateTotalExpense() => TransactionCalculator.CalculateTotalExpense(operations);
         public double TotalBalance => TransactionCalculator.TotalBalance(operations);
+
 
 
         public string GetStatistics(DateTime startDate, DateTime endDate)
         {
             return WalletReportGenerator.GetStatistics(Name, operations, startDate, endDate);
         }
+
 
     }
 }

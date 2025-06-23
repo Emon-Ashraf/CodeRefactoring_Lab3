@@ -13,18 +13,15 @@ namespace PersonalFinanceManagement
 
         public static string GetStatistics(string walletName, List<Operation> operations, DateTime startDate, DateTime endDate)
         {
-            var operationsWithinRange = operations
-                .Where(op => op.DateTime >= startDate && op.DateTime <= endDate)
-                .ToList();
+            var range = operations.Where(op => op.DateTime >= startDate && op.DateTime <= endDate).ToList();
 
-            double totalIncome = operationsWithinRange.OfType<IncomeTransaction>().Sum(i => i.Amount);
-            double totalExpense = operationsWithinRange.OfType<ExpenseTransaction>().Sum(e => e.Amount);
+            double totalIncome = range.OfType<IncomeTransaction>().Sum(op => op.Amount);
+            double totalExpense = range.OfType<ExpenseTransaction>().Sum(op => op.Amount);
+            int incomeCount = range.OfType<IncomeTransaction>().Count();
 
-            int incomeCount = operationsWithinRange.OfType<IncomeTransaction>().Count();
             double averageIncome = incomeCount > 0 ? totalIncome / incomeCount : 0;
-
-            double highestExpense = operationsWithinRange.OfType<ExpenseTransaction>().Any()
-                ? operationsWithinRange.OfType<ExpenseTransaction>().Max(e => e.Amount)
+            double highestExpense = range.OfType<ExpenseTransaction>().Any()
+                ? range.OfType<ExpenseTransaction>().Max(op => op.Amount)
                 : 0;
 
             return $"Statistics for {walletName} from {startDate:yyyy-MM-dd} to {endDate:yyyy-MM-dd}:\n" +
