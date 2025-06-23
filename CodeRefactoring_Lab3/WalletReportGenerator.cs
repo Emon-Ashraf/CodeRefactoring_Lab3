@@ -13,28 +13,23 @@ namespace PersonalFinanceManagement
 
         public static string GetStatistics(string walletName, List<Operation> operations, DateTime startDate, DateTime endDate)
         {
-            var operationsWithinRange = operations
+            var range = operations
                 .OfType<Transaction>()
                 .Where(op => op.DateTime >= startDate && op.DateTime <= endDate)
                 .ToList();
 
-            double totalIncome = operationsWithinRange
-                .Where(t => t.Kind == TransactionKind.Income)
-                .Sum(t => t.Amount);
+            var incomeTransactions = range.Where(t => t.Kind == TransactionKind.Income).ToList();
+            var expenseTransactions = range.Where(t => t.Kind == TransactionKind.Expense).ToList();
 
-            double totalExpense = operationsWithinRange
-                .Where(t => t.Kind == TransactionKind.Expense)
-                .Sum(t => t.Amount);
-
-            int incomeCount = operationsWithinRange
-                .Count(t => t.Kind == TransactionKind.Income);
+            double totalIncome = incomeTransactions.Sum(t => t.Amount);
+            double totalExpense = expenseTransactions.Sum(t => t.Amount);
+            int incomeCount = incomeTransactions.Count;
 
             double averageIncome = incomeCount > 0 ? totalIncome / incomeCount : 0;
 
-            double highestExpense = operationsWithinRange
-                .Where(t => t.Kind == TransactionKind.Expense)
-                .DefaultIfEmpty()
-                .Max(t => t?.Amount ?? 0);
+            double highestExpense = expenseTransactions.Any()
+                ? expenseTransactions.Max(e => e.Amount)
+                : 0;
 
             return $"Statistics for {walletName} from {startDate:yyyy-MM-dd} to {endDate:yyyy-MM-dd}:\n" +
                    $"Total Income: {totalIncome}\n" +
@@ -42,6 +37,7 @@ namespace PersonalFinanceManagement
                    $"Average Income: {averageIncome}\n" +
                    $"Highest Expense: {highestExpense}";
         }
+
 
     }
 }
